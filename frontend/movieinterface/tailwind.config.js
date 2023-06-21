@@ -18,7 +18,7 @@ module.exports = {
         'offgrayhighlight' : "#3F3B33"
       },
       width : {
-        '128': '32rem'
+        'PreviewCardWidth': '32rem'
       }
     },
   },
