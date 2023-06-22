@@ -15,7 +15,8 @@ module.exports = {
       colors: {
         'defaultColour' : "#3C3F3C",
         'offgray' : '#9BA29C',
-        'offgrayhighlight' : "#3F3B33"
+        'offgrayhighlight' : "#3F3B33",
+        'LinkColour' : '#AF2A2A'
       },
       width : {
         'PreviewCardWidth': '32rem'
