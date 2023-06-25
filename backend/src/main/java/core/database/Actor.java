@@ -7,7 +7,6 @@ public class Actor {
     private String name;
     private int gender; 
     private int id;
-
     public int getId() {
         return id;
     }

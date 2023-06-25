@@ -19,7 +19,8 @@ module.exports = {
         'LinkColour' : '#AF2A2A'
       },
       width : {
-        'PreviewCardWidth': '32rem'
+        'PreviewCardWidth': '32rem',
+        'MovieSearchWidth' : '64rem'
       }
     },
   },

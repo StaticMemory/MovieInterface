@@ -7,6 +7,12 @@ public class Movie {
     private String imageLink;
     private List<Integer> genreList;
     private String releaseData;
+
+    Movie(String title){
+        
+    }
+
+
     public String getReleaseData() {
         return releaseData;
     }
