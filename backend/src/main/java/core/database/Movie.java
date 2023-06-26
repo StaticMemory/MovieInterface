@@ -8,11 +8,19 @@ public class Movie {
     private List<Integer> genreList;
     private String releaseData;
 
-    Movie(String title){
-        
+    
+
+    public Movie(String title, String data, int id, String imageLink, List<Integer> genreList, String releaseData,
+            String language, List<String> actorList) {
+        this.title = title;
+        this.data = data;
+        this.id = id;
+        this.imageLink = imageLink;
+        this.genreList = genreList;
+        this.releaseData = releaseData;
+        this.language = language;
+        this.actorList = actorList;
     }
-
-
     public String getReleaseData() {
         return releaseData;
     }
