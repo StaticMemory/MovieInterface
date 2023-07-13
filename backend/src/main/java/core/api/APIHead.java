@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableAutoConfiguration
 public class APIHead {
     @RequestMapping(value="/")
-    public String returnTest(){
-        return "hiii";
+    public String returnTest (){
+        TMDBInteractor interactor = new TMDBInteractor();
+        interactor.requestMovieByString("Dark");
+        return "1";
     }
 }
