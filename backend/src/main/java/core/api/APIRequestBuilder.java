@@ -23,4 +23,19 @@ public class APIRequestBuilder {
     public String tvSearchByWordTitle(String title, String page){
         return baseUrl  + "search/tv?query=" + title + "&include_adult=false&language=en-US&page="+String.valueOf(page);
     }
+    public String actorBuilderByID(String ID){
+        return baseUrl + "movie/"+ ID +"/credits";
+    }
+    public String MovieActorCreditByID(String ID){
+        return baseUrl + "person/" + ID +"/movie_credits";
+    }
+    public String TVActorCreditByID(String ID){
+        return baseUrl + "person/" + ID +"/tv_credits";
+    }
+    public String actorSearchByID(String ID){
+        return baseUrl + "person/" + ID;
+    }
+    public String actorSearchByName(String ID){
+        return baseUrl + "search/person?query=" + ID + "&include_adult=false&language=en-US&page=1";
+    }
 }

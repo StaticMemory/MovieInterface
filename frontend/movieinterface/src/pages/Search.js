@@ -1,5 +1,6 @@
 import Banner from "@/components/Banner";
 import SearchResult from "@/components/SearchResult";
+import ActorResult from "@/components/actorSearchResult";
 import { useRouter } from "next/router";
 import queryString from 'query-string'
 import React from "react";
@@ -24,6 +25,7 @@ function renderResults(title, imagePath){
 }
 
 export default function Search(props){
+    console.log(props.jsonDataActors);
     const router = useRouter();
     const [searchOption, setSearchOption] = useState("");
     console.log(Array.isArray(props.jsonDataMovie));
@@ -70,7 +72,14 @@ export default function Search(props){
         })}
     </div>
     <div className="text-white text-center text-3xl underline">Actors</div>
-    
+    <div className="text-white flex">
+        {(props.jsonDataActors).map((actor) => {
+            return <><div>
+                <ActorResult name={actor['name'].replace(/['"]+/g, '')} profile={actor['profilePath'].replace(/['"]+/g, '')} id={actor['id'].replace(/['"]+/g, '')}/>
+                </div></>
+        })};
+
+    </div>
     
     </React.Fragment>
 }
@@ -78,7 +87,7 @@ export default function Search(props){
 
 export async function getServerSideProps(context){
     //const router = useRouter();
-    const result = await fetch("http://localhost:8080/movieBySearch",
+    const result = await fetch("http://localhost:8080/movie/BySearch",
         {method:'GET',
         headers:{
             'Accept': 'application/json',
@@ -88,7 +97,7 @@ export async function getServerSideProps(context){
         }
 
     });
-    const result2 = await fetch("http://localhost:8080/TVSeriesBySearch",
+    const result2 = await fetch("http://localhost:8080/TV/BySearch",
         {method:'GET',
         headers:{
             'Accept': 'application/json',
@@ -98,9 +107,17 @@ export async function getServerSideProps(context){
         }
 
     });
+    const result3 = await fetch("http://localhost:8080/actor/bySearch", {method : 'GET',
+headers:{
+    'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'name' : context.query.searchResult,
+            'page' : '1'
+}});
     const jsonDataMovie =await result.json();
     const jsonDataTVSeries = await result2.json();
-    return {props : {jsonDataMovie, jsonDataTVSeries}};
+    const jsonDataActors = await result3.json();
+    return {props : {jsonDataMovie, jsonDataTVSeries, jsonDataActors}};
 
     
 }
