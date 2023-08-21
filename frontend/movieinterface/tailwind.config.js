@@ -20,7 +20,7 @@ module.exports = {
       },
       width : {
         'PreviewCardWidth': '32rem',
-        'MovieSearchWidth' : '64rem',
+        'MovieSearchWidth' : '32rem',
         'ScreenWidth' : '100vh'
       }
     },

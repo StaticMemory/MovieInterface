@@ -38,4 +38,7 @@ public class APIRequestBuilder {
     public String actorSearchByName(String ID){
         return baseUrl + "search/person?query=" + ID + "&include_adult=false&language=en-US&page=1";
     }
+    public String getMovieByRecommendation(String ID){
+        return baseUrl + "movie/" + ID + "/recommendations&include_adult=false&language=en-US&page=1";
+    }
 }

@@ -5,11 +5,11 @@ export default function SearchResult(props){
     return <>
     <div className="w-MovieSearchWidth">
         
-            <div className="text-white flex w-MovieSearchWidth border-2">
+            <div className="text-white flex w-MovieSearchWidth">
                 <div>
                     <div className="text-center italic font-bold underline w-64">
                         <Link href={"/Movie?&id="+props.id} className="w-MovieSearchWidth">{props.name}</Link><div className="h-full">
-                            <img src={"https://image.tmdb.org/t/p/w500/"+props.imagePath} className="h-64 w-full"></img>
+                            <img src={"https://image.tmdb.org/t/p/w500/"+props.imagePath} className="h-64 w-full" alt="No Available Image"></img>
                         </div>
                     </div>
                 </div>{props.info}
@@ -20,11 +20,11 @@ export default function SearchResult(props){
         return<>
         <div className="w-MovieSearchWidth">
         
-            <div className="text-white flex w-MovieSearchWidth border-2">
+            <div className="text-white flex w-MovieSearchWidth ">
                 <div>
                     <div className="text-center italic font-bold underline w-64">
                         <Link href={"/Series?&id="+props.id} className="w-MovieSearchWidth">{props.name}</Link><div className="h-full">
-                            <img src={"https://image.tmdb.org/t/p/w500/"+props.imagePath} className="h-64 w-full"></img>
+                            <img src={"https://image.tmdb.org/t/p/w500/"+props.imagePath} className="h-64 w-full" alt="No Available Image"></img>
                         </div>
                     </div>
                 </div>{props.info}

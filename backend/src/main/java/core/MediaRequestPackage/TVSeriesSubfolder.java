@@ -2,8 +2,9 @@ package core.MediaRequestPackage;
 
 import java.util.List;
 
-import com.fasterxml.jackson.databind.JsonNode;
+import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.databind.JsonNode;
 public class TVSeriesSubfolder {
     boolean adult;
     String backdrop_path;

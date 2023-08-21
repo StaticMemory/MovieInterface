@@ -23,13 +23,12 @@ public class TMDBInteractor {
     public TMDBInteractor(){
         this.apiBuilder = new APIRequestBuilder();
         this.mapper = new ObjectMapper();
-        this.context = new AnnotationConfigApplicationContext();
+        this.context = new AnnotationConfigApplicationContext(keyHolder.class);
     }
     public ArrayList<MovieSubfolderPackage> requestMovieByString(String title, String pageNum){
             ObjectMapper objectmapper = new ObjectMapper();
             String resourceURL = apiBuilder.movieSearchByWordTitle(title, pageNum);
             this.context.scan("core.api");
-            this.context.refresh();
             this.key = this.context.getBean(keyHolder.class);
 
             WebClient client = WebClient.create(resourceURL);
@@ -43,12 +42,13 @@ public class TMDBInteractor {
                         movies.add(new MovieSubfolderPackage(noodle));
                     }
                 }
-                context.close();
+                this.context.close();
+                movies.sort((o2,o1) -> Double.compare(o1.getPopularity(),o2.getPopularity()));
                 return movies;
             }
             catch (Exception e){
                 System.out.println(e);
-                context.close();
+                this.context.close();
                 return null;
             }
 
@@ -57,10 +57,8 @@ public class TMDBInteractor {
     public ArrayList<TVSeriesSubfolder> requestTVSeriesByString(String title, String pageNum){
         ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.tvSearchByWordTitle(title, pageNum);
-        AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext();
-        context.scan("core.api");
-        context.refresh();
-        keyHolder curKey = context.getBean(keyHolder.class);
+        this.context.scan("core.api");
+        keyHolder curKey = this.context.getBean(keyHolder.class);
 
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
@@ -73,12 +71,12 @@ public class TMDBInteractor {
                     tvseries.add(new TVSeriesSubfolder(noodle));
                 }
             }
-            context.close();
+            this.context.close();
             return tvseries;
             }
         catch (Exception e){
             System.out.println(e);
-            context.close();
+            this.context.close();
             return null;
         }
     }
@@ -86,7 +84,6 @@ public class TMDBInteractor {
         ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.movieSearchByID(id);
         this.context.scan("core.api");
-        this.context.refresh();
         this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
@@ -108,7 +105,6 @@ public class TMDBInteractor {
         ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.actorBuilderByID(ID);
         this.context.scan("core.api");
-        this.context.refresh();
         this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
@@ -134,7 +130,6 @@ public class TMDBInteractor {
         ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.MovieActorCreditByID(ID);
         this.context.scan("core.api");
-        this.context.refresh();
         this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
@@ -160,7 +155,6 @@ public class TMDBInteractor {
         ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.actorSearchByID(ID);
         this.context.scan("core.api");
-        this.context.refresh();
         this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
@@ -182,7 +176,6 @@ public class TMDBInteractor {
         ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.actorSearchByName(name);
         this.context.scan("core.api");
-        this.context.refresh();
         this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
@@ -195,8 +188,34 @@ public class TMDBInteractor {
                     actor.add(new ActorIntro(noodle));
                 }
             }
-            context.close();
+            this.context.close();
             return actor;
+        }
+        catch (Exception e){
+            System.out.println(e);
+            this.context.close();
+            return null;
+        }
+    }
+    public ArrayList<MovieSubfolderPackage> movieByRecommendation(String ID){
+        ObjectMapper objectmapper = new ObjectMapper();
+        String resourceURL = apiBuilder.getMovieByRecommendation(ID);
+        this.context.scan("core.api");
+        this.key = this.context.getBean(keyHolder.class);
+        WebClient client = WebClient.create(resourceURL);
+        String responseVar = client.get()
+        .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
+        try{
+            JsonNode node = objectmapper.readTree(responseVar);
+            ArrayList<MovieSubfolderPackage> movies = new ArrayList<MovieSubfolderPackage>(100);
+            if(node.get("results").isArray()){
+                for(JsonNode noodle : node.get("results")){
+                    movies.add(new MovieSubfolderPackage(noodle));
+                }
+            }
+            context.close();
+            movies.sort((o2,o1) -> Double.compare(o1.getPopularity(),o2.getPopularity()));
+            return movies;
         }
         catch (Exception e){
             System.out.println(e);

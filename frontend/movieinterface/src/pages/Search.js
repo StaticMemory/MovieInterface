@@ -2,7 +2,6 @@ import Banner from "@/components/Banner";
 import SearchResult from "@/components/SearchResult";
 import ActorResult from "@/components/actorSearchResult";
 import { useRouter } from "next/router";
-import queryString from 'query-string'
 import React from "react";
 
 import { useState } from "react";
@@ -28,7 +27,6 @@ export default function Search(props){
     console.log(props.jsonDataActors);
     const router = useRouter();
     const [searchOption, setSearchOption] = useState("");
-    console.log(Array.isArray(props.jsonDataMovie));
     return <React.Fragment>
     <Banner></Banner>
     <div className="border-2 border-black justify-center flex bg-offgrayhighlight">
@@ -53,32 +51,45 @@ export default function Search(props){
     <div className="text-center">
         <div className="text-white">Showing Search Results for Search Request: <i>{router.query.searchResult}</i></div>
     </div>
-    <div className="text-white text-center text-3xl underline">Movies:</div>
-    <div>
-       {(props.jsonDataMovie).map((movie) => {
-            return <><SearchResult key={movie.id} name={movie.original_title} isMovie={true} isTV={false} isActor={false} id={movie.id} imagePath={movie.poster_path} info={movie.overview}></SearchResult>
-            <br></br>
-            
-            </>
-        })}
-    </div>
-    <div className="text-white text-center text-3xl underline">TV Series</div>
-    <div>
-       {(props.jsonDataTVSeries).map((tv) => {
-            return <>
-            <SearchResult key={tv.id} name={tv.name} isActor={false} isTV={true} isMovie={false} id={tv.id} imagePath={tv.poster_path} info={tv.overview}></SearchResult>
-            <br></br>
-            </>
-        })}
-    </div>
-    <div className="text-white text-center text-3xl underline">Actors</div>
-    <div className="text-white flex">
-        {(props.jsonDataActors).map((actor) => {
-            return <><div>
-                <ActorResult name={actor['name'].replace(/['"]+/g, '')} profile={actor['profilePath'].replace(/['"]+/g, '')} id={actor['id'].replace(/['"]+/g, '')}/>
-                </div></>
-        })};
-
+    <div className="flex">
+        <div className="pr-3">
+            <div className="p-2">
+                <div className="text-center ml-auto mr-auto border-2 rounded border-gray-800 w-fit p-2 bg-gray-500">Movies</div>
+            </div>
+        <div>
+        {(props.jsonDataMovie).map((movie) => {
+                return <><SearchResult key={movie.id} name={movie.original_title} isMovie={true} isTV={false} isActor={false} id={movie.id} 
+                imagePath={movie.poster_path} info={movie.overview}></SearchResult>
+                <br></br>
+                </>
+            })}
+            </div>
+        </div>
+        <div className="pr-3">
+            <div className="p-2">
+                <div className="text-center ml-auto mr-auto border-2 rounded border-gray-800 w-fit p-2 bg-gray-500">TV Series</div>
+            </div>
+        <div>
+            {(props.jsonDataTVSeries).map((tv) => {
+                    return <>
+                    <SearchResult key={tv.id} name={tv.name} isActor={false} isTV={true} isMovie={false} id={tv.id} imagePath={tv.poster_path} info={tv.overview}></SearchResult>
+                    <br></br>
+                    </>
+                })}
+            </div>
+        </div>
+        <div>
+        <div className="p-2">
+            <div className="text-center ml-auto mr-auto border-2 rounded border-gray-800 w-fit p-2 bg-gray-500">Actors</div>
+        </div>
+        <div>
+                {(props.jsonDataActors).map((actor) => {
+                    return <><div>
+                        <ActorResult name={actor['name'].replace(/['"]+/g, '')} profile={actor['profilePath'].replace(/['"]+/g, '')} id={actor['id'].replace(/['"]+/g, '')}/>
+                        </div></>
+                })};
+            </div>
+        </div>
     </div>
     
     </React.Fragment>
