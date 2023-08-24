@@ -1,6 +1,8 @@
 package core.SQLEntities;
 
 
+import java.time.LocalDate;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,7 +16,15 @@ public class User {
     private long id;
     @Column(name = "username")
     private String username;
+    private LocalDate accountCreated;
     public User() {
+        this.accountCreated = LocalDate.now();
+    }
+    public LocalDate getAccountCreated() {
+        return accountCreated;
+    }
+    public void setAccountCreated(LocalDate accountCreated) {
+        this.accountCreated = accountCreated;
     }
     public String getUsername() {
         return username;

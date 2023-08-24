@@ -1,6 +1,7 @@
 package core.api;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -77,17 +78,17 @@ public class APIHead {
         TMDBInteractor interactor = new TMDBInteractor();
         return interactor.movieByRecommendation(id);
     }
-    @RequestMapping(value="AddUser")
+    @RequestMapping(value="user/addUser")
     public void addUser(){
         User newUser = new User();
         newUser.setUsername("Staticzoop");
         userRepo.save(newUser);
     }
-    @RequestMapping(value="DeleteUserByName")
+    @RequestMapping(value="user/deleteUserByName")
     public boolean deleteUser(@RequestHeader("name") String name){
         return true;
     }
-    @RequestMapping(value="createReview")
+    @RequestMapping(value="review/createReview")
     public boolean createReview(@RequestHeader("id") Long authorID, @RequestHeader("mediaType") int mediaType, @RequestHeader("mediaID") Long mediaID){
         Review review = new Review();
         review.setAuthorID(authorID);
@@ -96,26 +97,19 @@ public class APIHead {
         reviewRepo.save(review);
         return true;
     }
-    @RequestMapping(value="reviewTest")
-    public boolean checkReview(){
-        Review review = new Review();
-        review.setAuthorID(2);
-        reviewRepo.save(review);
-        return false;
-    }
-    @RequestMapping(value = "returnReviewsForSpecificMedia")
-    public ArrayList<Review> returnReviewForMedia(@RequestHeader("id") Long mediaID, @RequestHeader("mediaType") int mediaType){
-        ArrayList<Review> resultList = reviewRepo.getReviewsByMediaID(String.valueOf(mediaID), String.valueOf(mediaType));
+    @RequestMapping(value = "media/returnSpecificMediaReview")
+    public ArrayList<Review> returnReviewForMedia(@RequestHeader("id") String mediaID, @RequestHeader("mediaType") String mediaType){
+        ArrayList<Review> resultList = reviewRepo.getReviewsByMediaID(mediaID, mediaType);
         return resultList;
     }
-    @RequestMapping(value = "returnReviewsMadeBySingleUser")
-    public ArrayList<Review> returnUserCreatedReviews(@RequestHeader("userID") Long userID){
-        ArrayList<Review> resultList = reviewRepo.getReviewsByAuthorID(String.valueOf(userID));
+    @RequestMapping(value = "user/returnReviewByUser")
+    public ArrayList<Review> returnUserCreatedReviews(@RequestHeader("userID") String userID){
+        ArrayList<Review> resultList = reviewRepo.getReviewsByAuthorID(userID);
         return resultList;
     }
-    @RequestMapping(value = "Empty")
-    public String test(){
-        return "What";
+    @RequestMapping(value = "user/returnUserByName")
+    public Optional<User> returnUser(@RequestHeader("user") String name){
+        Optional<User> usr = userRepo.getUserByName(name);
+        return usr;
     }
-
 }

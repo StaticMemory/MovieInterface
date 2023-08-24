@@ -1,5 +1,7 @@
 package core.SQLEntities;
 
+import java.time.LocalDate;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -12,6 +14,13 @@ public class Review {
     private long id;
     private int reviewType; // 0 = movie, 1 = tv series, 2 = tv episode
     private long authorID;
+    private LocalDate localDate;
+    public LocalDate getLocalDate() {
+        return localDate;
+    }
+    public void setLocalDate(LocalDate localDate) {
+        this.localDate = localDate;
+    }
     public long getId() {
         return id;
     }
@@ -19,6 +28,7 @@ public class Review {
         return authorID;
     }
     public Review() {
+        this.localDate = LocalDate.now();
     }
     public void setId(long id) {
         this.id = id;

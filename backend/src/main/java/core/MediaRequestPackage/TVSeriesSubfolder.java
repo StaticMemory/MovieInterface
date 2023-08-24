@@ -2,7 +2,6 @@ package core.MediaRequestPackage;
 
 import java.util.List;
 
-import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.JsonNode;
 public class TVSeriesSubfolder {

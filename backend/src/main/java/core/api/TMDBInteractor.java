@@ -17,25 +17,25 @@ import core.MediaRequestPackage.TVSeriesSubfolder;
 
 public class TMDBInteractor {
     private APIRequestBuilder apiBuilder;
-    private ObjectMapper mapper;
+    private ObjectMapper objectmapper;
     private AnnotationConfigApplicationContext context;
     private keyHolder key;
     public TMDBInteractor(){
         this.apiBuilder = new APIRequestBuilder();
-        this.mapper = new ObjectMapper();
+        this.objectmapper = new ObjectMapper();
         this.context = new AnnotationConfigApplicationContext(keyHolder.class);
+        this.context.scan("core.api");
+        this.key = this.context.getBean(keyHolder.class);
+
     }
     public ArrayList<MovieSubfolderPackage> requestMovieByString(String title, String pageNum){
-            ObjectMapper objectmapper = new ObjectMapper();
             String resourceURL = apiBuilder.movieSearchByWordTitle(title, pageNum);
-            this.context.scan("core.api");
-            this.key = this.context.getBean(keyHolder.class);
-
+            
             WebClient client = WebClient.create(resourceURL);
             String responseVar = client.get()
             .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
             try{
-                JsonNode node = objectmapper.readTree(responseVar);
+                JsonNode node = this.objectmapper.readTree(responseVar);
                 ArrayList<MovieSubfolderPackage> movies = new ArrayList<MovieSubfolderPackage>(100);
                 if(node.get("results").isArray()){
                     for(JsonNode noodle : node.get("results")){
@@ -55,16 +55,13 @@ public class TMDBInteractor {
         
     }
     public ArrayList<TVSeriesSubfolder> requestTVSeriesByString(String title, String pageNum){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.tvSearchByWordTitle(title, pageNum);
-        this.context.scan("core.api");
-        keyHolder curKey = this.context.getBean(keyHolder.class);
 
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
-        .header("Authorization", (" Bearer " + curKey.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
+        .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             ArrayList<TVSeriesSubfolder> tvseries = new ArrayList<TVSeriesSubfolder>(100);
             if(node.get("results").isArray()){
                 for(JsonNode noodle : node.get("results")){
@@ -81,15 +78,12 @@ public class TMDBInteractor {
         }
     }
     public MovieIDClass requestMovieByID(String id){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.movieSearchByID(id);
-        this.context.scan("core.api");
-        this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
         .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             MovieIDClass movie = new MovieIDClass(node);
             
             context.close();
@@ -102,15 +96,12 @@ public class TMDBInteractor {
         }
     }
     public ArrayList<ActorProfile> getActorByID(String ID){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.actorBuilderByID(ID);
-        this.context.scan("core.api");
-        this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
         .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             ArrayList<ActorProfile> actors = new ArrayList<ActorProfile>(15);
             if(node.get("cast").isArray()){
                 for(JsonNode noodle : node.get("cast")){
@@ -127,15 +118,12 @@ public class TMDBInteractor {
         }
     }
     public ArrayList<MovieCreditClass> getMovieActor(String ID){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.MovieActorCreditByID(ID);
-        this.context.scan("core.api");
-        this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
         .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             ArrayList<MovieCreditClass> actors = new ArrayList<MovieCreditClass>(15);
             if(node.get("cast").isArray()){
                 for(JsonNode noodle : node.get("cast")){
@@ -152,15 +140,12 @@ public class TMDBInteractor {
         }
     }
     public SpecificActor getSingleActor(String ID){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.actorSearchByID(ID);
-        this.context.scan("core.api");
-        this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
         .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             SpecificActor actor = new SpecificActor(node);
             
             context.close();
@@ -173,15 +158,12 @@ public class TMDBInteractor {
         }
     }
     public ArrayList<ActorIntro> listOfActors(String name){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.actorSearchByName(name);
-        this.context.scan("core.api");
-        this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
         .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             ArrayList<ActorIntro> actor = new ArrayList<ActorIntro>(100);
             if(node.get("results").isArray()){
                 for(JsonNode noodle : node.get("results")){
@@ -198,15 +180,12 @@ public class TMDBInteractor {
         }
     }
     public ArrayList<MovieSubfolderPackage> movieByRecommendation(String ID){
-        ObjectMapper objectmapper = new ObjectMapper();
         String resourceURL = apiBuilder.getMovieByRecommendation(ID);
-        this.context.scan("core.api");
-        this.key = this.context.getBean(keyHolder.class);
         WebClient client = WebClient.create(resourceURL);
         String responseVar = client.get()
         .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
         try{
-            JsonNode node = objectmapper.readTree(responseVar);
+            JsonNode node = this.objectmapper.readTree(responseVar);
             ArrayList<MovieSubfolderPackage> movies = new ArrayList<MovieSubfolderPackage>(100);
             if(node.get("results").isArray()){
                 for(JsonNode noodle : node.get("results")){
