@@ -4,9 +4,12 @@ import { useRouter } from "next/router";
 import MovieSplashPage from "@/components/MovieSplashPage";
 import Link from "next/link";
 import ReviewPanel from "@/components/Review";
+import { useSession } from "next-auth/react";
+import IsLoggedInForReview from "@/components/IsLoggedInForReview";
 export default function Movie(props){
     const router = useRouter();
     const [searchOption, setSearchOption] = useState("");
+    const {data : session} = useSession();
     return <>
 
     
@@ -35,8 +38,8 @@ export default function Movie(props){
     tagline={props.movieVal.tagline.replace(/['"]+/g, '')}
     overview={props.movieVal.overview.replace(/['"]+/g, '')}/>
     <div className="text-white  flex overflow-x-hidden">
-    {props.actorVal.map((actor)=>{
-        return <div className="">
+    {props.actorVal.map((actor, id)=>{
+        return <div key={id}className="">
             <div className="text-white p-8 text-center ">
                 <Link href={"Actor/"+ actor.id}>
                     {actor.name.replace(/['"]+/g, '')} 
@@ -54,7 +57,9 @@ export default function Movie(props){
     <hr></hr>
     {//<div className="text-white">Titles Related to Search: <i>{props.movieVal.title}</i></div>
 }
+    
     <div className="text-white text-center p-2">User Submitted Reviews</div>
+    <IsLoggedInForReview id={props.movieVal.id} type={'0'}></IsLoggedInForReview>
     <ReviewPanel/>
     </>
     
@@ -62,7 +67,6 @@ export default function Movie(props){
 }
 
 export async function getServerSideProps(context){
-    console.log(context.query.id);
     const result = await fetch("http://localhost:8080/movie/byID", {method:'GET',
     headers:{
         'Accept': 'application/json',
@@ -79,6 +83,15 @@ export async function getServerSideProps(context){
         }
 
     });
+    const reviewList = await fetch("http://localhost:8080/media/returnSpecificMediaReview", {method:'GET',
+    headers:{
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'id' : context.query.id,
+        'mediaType' : "0"
+    }    
+})
     const actorVal = await result2.json();
-    return {props : {movieVal, actorVal}}
+    const reviewData = await reviewList.json();
+    return {props : {movieVal, actorVal, reviewData}}
 }

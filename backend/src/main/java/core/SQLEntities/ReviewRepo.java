@@ -10,7 +10,8 @@ public interface ReviewRepo extends CrudRepository<Review,Long> {
     ArrayList<Review> getReviewsByAuthorID(String id);
 
     @Query("SELECT u FROM Review u WHERE u.reviewType = ?1 and u.idOfMedia = ?2")
-    ArrayList<Review> getReviewsByMediaID(String mediaType, String mediaID);
+    ArrayList<Review> getReviewsByMediaID(int mediaType, Long mediaID);
 
+    
 
 }

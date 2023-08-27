@@ -1,6 +1,6 @@
 export default function ReviewPanel(){
     return <>
-    <div className="border-2 relative">
+    <div className="border-2 relative w-64">
         <div className="flex">
             <div className="text-white text-center ">"Greatest Movie Ever"</div>
             <div className="text-white float">  5 Stars</div>

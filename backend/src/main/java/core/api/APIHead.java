@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,6 +18,7 @@ import core.MediaRequestPackage.MovieSubfolderPackage;
 import core.MediaRequestPackage.SpecificActor;
 import core.MediaRequestPackage.TVSeriesSubfolder;
 import core.SQLEntities.Review;
+import core.SQLEntities.ReviewData;
 import core.SQLEntities.ReviewRepo;
 import core.SQLEntities.User;
 import core.SQLEntities.UserRepo;
@@ -88,18 +91,23 @@ public class APIHead {
     public boolean deleteUser(@RequestHeader("name") String name){
         return true;
     }
-    @RequestMapping(value="review/createReview")
-    public boolean createReview(@RequestHeader("id") Long authorID, @RequestHeader("mediaType") int mediaType, @RequestHeader("mediaID") Long mediaID){
+    @PostMapping(value="review/createReview")
+    public boolean createReview(@RequestHeader("id") String authorID, @RequestHeader("mediaType") String mediaType, 
+    @RequestHeader("mediaID") String mediaID, @RequestHeader String rating, @RequestBody String reviewData){
+
         Review review = new Review();
-        review.setAuthorID(authorID);
-        review.setIdOfMedia(mediaID);
-        review.setReviewType(mediaType);
+        review.setAuthorID(Long.parseLong(authorID));
+        review.setIdOfMedia(Long.parseLong(mediaID));
+        review.setReviewType(Integer.parseInt(mediaType));
+        review.setReviewData(reviewData);
+        review.setReviewVal(Float.parseFloat(rating));
         reviewRepo.save(review);
         return true;
+
     }
     @RequestMapping(value = "media/returnSpecificMediaReview")
     public ArrayList<Review> returnReviewForMedia(@RequestHeader("id") String mediaID, @RequestHeader("mediaType") String mediaType){
-        ArrayList<Review> resultList = reviewRepo.getReviewsByMediaID(mediaID, mediaType);
+        ArrayList<Review> resultList = reviewRepo.getReviewsByMediaID(Integer.parseInt(mediaType),Long.parseLong(mediaID));
         return resultList;
     }
     @RequestMapping(value = "user/returnReviewByUser")
@@ -111,5 +119,10 @@ public class APIHead {
     public Optional<User> returnUser(@RequestHeader("user") String name){
         Optional<User> usr = userRepo.getUserByName(name);
         return usr;
+    }
+    @RequestMapping(value = "review/deleteReview")
+    public boolean deleteReview(@RequestHeader("reviewID") Long name){
+        reviewRepo.deleteById(name);
+        return true;
     }
 }

@@ -15,6 +15,20 @@ public class Review {
     private int reviewType; // 0 = movie, 1 = tv series, 2 = tv episode
     private long authorID;
     private LocalDate localDate;
+    private String reviewData;
+    public String getReviewData() {
+        return reviewData;
+    }
+    public void setReviewData(String reviewData) {
+        this.reviewData = reviewData;
+    }
+    public String getAuthorName() {
+        return authorName;
+    }
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
+    }
+    private String authorName;
     public LocalDate getLocalDate() {
         return localDate;
     }

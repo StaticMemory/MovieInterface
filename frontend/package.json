@@ -1,5 +1,6 @@
 {
   "dependencies": {
-    "query-string": "^8.1.0"
+    "query-string": "^8.1.0",
+    "next-auth": "^4.23.1"
   }
 }
