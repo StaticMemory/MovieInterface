@@ -17,13 +17,13 @@ public class User {
     @Column(name = "username")
     private String username;
     private LocalDate accountCreated;
-    public String getEmail() {
-        return email;
+    private String image;
+    public String getImage() {
+        return image;
     }
-    public void setEmail(String email) {
-        this.email = email;
+    public void setImage(String image) {
+        this.image = image;
     }
-    private String email;
     public User() {
         this.accountCreated = LocalDate.now();
     }

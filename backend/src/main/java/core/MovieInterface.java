@@ -21,6 +21,7 @@ public class MovieInterface {
 			@Override
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/review/createReview").allowedOrigins("http://localhost:3000");
+        registry.addMapping("/user/addUser").allowedOrigins("http://localhost:3000");
 			}
 		};
     }

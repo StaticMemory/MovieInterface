@@ -81,10 +81,15 @@ public class APIHead {
         TMDBInteractor interactor = new TMDBInteractor();
         return interactor.movieByRecommendation(id);
     }
-    @RequestMapping(value="user/addUser")
-    public void addUser(){
+    @PostMapping(value="user/addUser")
+    public void addUser(@RequestHeader("name") String name, @RequestHeader("image") String image){
+        Optional<User> usr = userRepo.getUserByName(name);
+        if(usr.isPresent()){
+            return;
+        }
         User newUser = new User();
-        newUser.setUsername("Staticzoop");
+        newUser.setUsername(name);
+        newUser.setImage(image);
         userRepo.save(newUser);
     }
     @RequestMapping(value="user/deleteUserByName")
@@ -116,7 +121,7 @@ public class APIHead {
         return resultList;
     }
     @RequestMapping(value = "user/returnUserByName")
-    public Optional<User> returnUser(@RequestHeader("user") String name){
+    public Optional<User> returnUserByName(@RequestHeader("user") String name){
         Optional<User> usr = userRepo.getUserByName(name);
         return usr;
     }
@@ -124,5 +129,10 @@ public class APIHead {
     public boolean deleteReview(@RequestHeader("reviewID") Long name){
         reviewRepo.deleteById(name);
         return true;
+    }
+    @RequestMapping(value = "user/returnUserByID")
+    public Optional<User> returnUserByID(@RequestHeader("id") String ID){
+        Optional<User> usr = userRepo.findById(Long.parseLong(ID));
+        return usr;
     }
 }
