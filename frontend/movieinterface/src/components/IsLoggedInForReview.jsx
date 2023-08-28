@@ -4,19 +4,22 @@ function ReviewBox(props){
     const [sendReview, updateSendReview] = useState(false);
     const [reviewData, updateReviewData] = useState("");
     const [rating, setRating] = useState("3.67");
+    const {data: session} = useSession()
     useEffect(()=>{
         const updateDatabase = async ()=>{
             const createReview = await fetch("http://localhost:8080/review/createReview", {method:'POST',
         headers:{
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'id' : "1",
+            'id' : session.user.name,
             'mediaType' : props.type,
             'mediaID' : props.id,
-            'rating' : rating
+            'rating' : rating,
+            'mediaTitle' : props.title
         },
         body : JSON.stringify(reviewData)
     });
+        window.location.reload(false);
         }
         if(sendReview){
             updateDatabase();
@@ -39,6 +42,11 @@ function ReviewBox(props){
 export default function IsLoggedInForReview(props){
     const [renderReviewBox, swapRenderReviewBox] = useState(false);
     const {data : session} = useSession();
+    if(props.hasWritten){
+        return<>
+        <div className="text-white">This</div>
+        </>
+    }
     if(session){
         return <div>
             <div className="flex">
@@ -49,7 +57,7 @@ export default function IsLoggedInForReview(props){
                 
             </div>
             <br></br>
-            <ReviewBox doRender={renderReviewBox} session={session} id={props.id} type={props.type}/>
+            <ReviewBox doRender={renderReviewBox} session={session} id={props.id} type={props.type} title={props.title}/>
         </div>
     }
     return <div>

@@ -6,10 +6,11 @@ import Link from "next/link";
 import ReviewPanel from "@/components/Review";
 import { useSession } from "next-auth/react";
 import IsLoggedInForReview from "@/components/IsLoggedInForReview";
+import { checkIfUserWroteReviewForPage, getReviews } from "../../../api/Reviews";
 export default function Movie(props){
     const router = useRouter();
     const [searchOption, setSearchOption] = useState("");
-    const {data : session} = useSession();
+    console.log(props.reviewData);
     return <>
 
     
@@ -59,8 +60,11 @@ export default function Movie(props){
 }
     
     <div className="text-white text-center p-2">User Submitted Reviews</div>
-    <IsLoggedInForReview id={props.movieVal.id} type={'0'}></IsLoggedInForReview>
+    <IsLoggedInForReview id={props.movieVal.id} type={'0'} title={props.movieVal.title} hasWritten={props.revCheck}></IsLoggedInForReview>
     <ReviewPanel/>
+    {props.reviewData.map((review, id)=>{
+        return <><div className="text-white">dd</div></>
+    })}
     </>
     
 
@@ -83,15 +87,8 @@ export async function getServerSideProps(context){
         }
 
     });
-    const reviewList = await fetch("http://localhost:8080/media/returnSpecificMediaReview", {method:'GET',
-    headers:{
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'id' : context.query.id,
-        'mediaType' : "0"
-    }    
-})
+    const revCheck = await checkIfUserWroteReviewForPage("0",context.query.id, "0");
+    const reviewData = await getReviews(context.query.id, "0");
     const actorVal = await result2.json();
-    const reviewData = await reviewList.json();
-    return {props : {movieVal, actorVal, reviewData}}
+    return {props : {movieVal, actorVal, reviewData, revCheck}}
 }

@@ -77,5 +77,4 @@ public class Review {
     }
     private long idOfMedia;
     private String nameOfMedia;
-
 }

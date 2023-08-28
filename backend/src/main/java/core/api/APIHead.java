@@ -85,6 +85,7 @@ public class APIHead {
     public void addUser(@RequestHeader("name") String name, @RequestHeader("image") String image){
         Optional<User> usr = userRepo.getUserByName(name);
         if(usr.isPresent()){
+            System.out.println("Ran into an issue :3");
             return;
         }
         User newUser = new User();
@@ -98,10 +99,15 @@ public class APIHead {
     }
     @PostMapping(value="review/createReview")
     public boolean createReview(@RequestHeader("id") String authorID, @RequestHeader("mediaType") String mediaType, 
-    @RequestHeader("mediaID") String mediaID, @RequestHeader String rating, @RequestBody String reviewData){
+    @RequestHeader("mediaID") String mediaID, @RequestHeader("rating") String rating, @RequestHeader("mediaTitle") String mediaTitle, @RequestBody String reviewData){
 
         Review review = new Review();
-        review.setAuthorID(Long.parseLong(authorID));
+        review.setAuthorName(authorID);
+        Optional<User> usr = userRepo.getUserByName(authorID);
+        if(usr.isPresent()){
+            review.setAuthorID(usr.get().getId());
+        }
+        review.setNameOfMedia(mediaTitle);
         review.setIdOfMedia(Long.parseLong(mediaID));
         review.setReviewType(Integer.parseInt(mediaType));
         review.setReviewData(reviewData);
@@ -111,13 +117,13 @@ public class APIHead {
 
     }
     @RequestMapping(value = "media/returnSpecificMediaReview")
-    public ArrayList<Review> returnReviewForMedia(@RequestHeader("id") String mediaID, @RequestHeader("mediaType") String mediaType){
-        ArrayList<Review> resultList = reviewRepo.getReviewsByMediaID(Integer.parseInt(mediaType),Long.parseLong(mediaID));
+    public Optional<ArrayList<Review>> returnReviewForMedia(@RequestHeader("id") String mediaID, @RequestHeader("mediaType") String mediaType){
+        Optional<ArrayList<Review>> resultList = reviewRepo.getReviewsByMediaID(Integer.parseInt(mediaType),Long.parseLong(mediaID));
         return resultList;
     }
     @RequestMapping(value = "user/returnReviewByUser")
     public ArrayList<Review> returnUserCreatedReviews(@RequestHeader("userID") String userID){
-        ArrayList<Review> resultList = reviewRepo.getReviewsByAuthorID(userID);
+        ArrayList<Review> resultList = reviewRepo.getReviewsByAuthorID(Long.parseLong(userID));
         return resultList;
     }
     @RequestMapping(value = "user/returnUserByName")
@@ -134,5 +140,10 @@ public class APIHead {
     public Optional<User> returnUserByID(@RequestHeader("id") String ID){
         Optional<User> usr = userRepo.findById(Long.parseLong(ID));
         return usr;
+    }
+    @RequestMapping(value = "review/checkIfReviewExistsByUser")
+    public boolean checkIfReviewExists(@RequestHeader("authorid") String author, @RequestHeader("mediatype") String mediatype, @RequestHeader("mediaID") String mediaid){
+        Optional<Review> rev = reviewRepo.checkIfReviewExists(Integer.parseInt(mediatype), Long.parseLong(mediaid), Long.parseLong(author));
+        return rev.isPresent();
     }
 }
