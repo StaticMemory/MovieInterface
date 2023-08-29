@@ -44,4 +44,7 @@ public class APIRequestBuilder {
     public String getEpisodeList(String ID, String seasonNum){
         return baseUrl + "tv/" + ID + "/season/" + seasonNum + "?language=en-US";
     }
+    public String getSeasonBreakdown(String ID){
+        return baseUrl + "tv/" + ID + "?language=en-US";
+    }
 }

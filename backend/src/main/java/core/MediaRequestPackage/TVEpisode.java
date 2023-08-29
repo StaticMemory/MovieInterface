@@ -8,6 +8,13 @@ public class TVEpisode {
     private String name;
     private String overview;
     private String runtime;
+    private String stillPath;
+    public String getStillPath() {
+        return stillPath;
+    }
+    public void setStillPath(String stillPath) {
+        this.stillPath = stillPath;
+    }
     public String getAirDate() {
         return airDate;
     }
@@ -44,5 +51,6 @@ public class TVEpisode {
         name = nd.get("name").asText();
         overview = nd.get("overview").asText();
         runtime = nd.get("runtime").asText();
+        stillPath = nd.get("still_path").asText();
     }
 }

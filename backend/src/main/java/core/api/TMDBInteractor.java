@@ -14,6 +14,7 @@ import core.MediaRequestPackage.MovieIDClass;
 import core.MediaRequestPackage.MovieSubfolderPackage;
 import core.MediaRequestPackage.SpecificActor;
 import core.MediaRequestPackage.TVEpisode;
+import core.MediaRequestPackage.TVSeriesOverview;
 import core.MediaRequestPackage.TVSeriesSubfolder;
 
 public class TMDBInteractor {
@@ -211,8 +212,8 @@ public class TMDBInteractor {
         try{
             JsonNode node = this.objectmapper.readTree(responseVar);
             ArrayList<TVEpisode> seasons = new ArrayList<TVEpisode>(100);
-            if(node.get("results").isArray()){
-                for(JsonNode noodle : node.get("results")){
+            if(node.get("episodes").isArray()){
+                for(JsonNode noodle : node.get("episodes")){
                     seasons.add(new TVEpisode(noodle));
                 }
             }
@@ -225,5 +226,27 @@ public class TMDBInteractor {
             return null;
         }
 
+    }
+    public ArrayList<TVSeriesOverview> getSeriesOverview(String ID){
+        String resourceURL = apiBuilder.getSeasonBreakdown(ID);
+        WebClient client = WebClient.create(resourceURL);
+        String responseVar = client.get()
+        .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
+        try{
+            JsonNode node = this.objectmapper.readTree(responseVar);
+            ArrayList<TVSeriesOverview> seasons = new ArrayList<TVSeriesOverview>(100);
+            if(node.get("seasons").isArray()){
+                for(JsonNode noodle : node.get("seasons")){
+                    seasons.add(new TVSeriesOverview(noodle));
+                }
+            }
+            context.close();
+            return seasons;
+        }
+        catch (Exception e){
+            System.out.println(e);
+            context.close();
+            return null;
+        }
     } 
 }

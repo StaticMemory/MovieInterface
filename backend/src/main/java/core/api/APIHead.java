@@ -17,6 +17,7 @@ import core.MediaRequestPackage.MovieIDClass;
 import core.MediaRequestPackage.MovieSubfolderPackage;
 import core.MediaRequestPackage.SpecificActor;
 import core.MediaRequestPackage.TVEpisode;
+import core.MediaRequestPackage.TVSeriesOverview;
 import core.MediaRequestPackage.TVSeriesSubfolder;
 import core.SQLEntities.Review;
 import core.SQLEntities.ReviewRepo;
@@ -155,5 +156,10 @@ public class APIHead {
     public ArrayList<TVEpisode> getSeriesEpisodesList(@RequestHeader("id") String tvID, @RequestHeader("seasonNum") String seasonNum){
         TMDBInteractor interactor = new TMDBInteractor();
         return interactor.episodeList(tvID, seasonNum);
+    }
+    @RequestMapping(value="Series/getSeriesOverview")
+    public ArrayList<TVSeriesOverview> getSeriesOverview(@RequestHeader("id") String id){
+        TMDBInteractor interactor = new TMDBInteractor();
+        return interactor.getSeriesOverview(id);
     }
 }
