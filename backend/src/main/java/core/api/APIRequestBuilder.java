@@ -41,4 +41,7 @@ public class APIRequestBuilder {
     public String getMovieByRecommendation(String ID){
         return baseUrl + "movie/" + ID + "/recommendations&include_adult=false&language=en-US&page=1";
     }
+    public String getEpisodeList(String ID, String seasonNum){
+        return baseUrl + "tv/" + ID + "/season/" + seasonNum + "?language=en-US";
+    }
 }

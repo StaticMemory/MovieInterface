@@ -16,9 +16,9 @@ import core.MediaRequestPackage.MovieCreditClass;
 import core.MediaRequestPackage.MovieIDClass;
 import core.MediaRequestPackage.MovieSubfolderPackage;
 import core.MediaRequestPackage.SpecificActor;
+import core.MediaRequestPackage.TVEpisode;
 import core.MediaRequestPackage.TVSeriesSubfolder;
 import core.SQLEntities.Review;
-import core.SQLEntities.ReviewData;
 import core.SQLEntities.ReviewRepo;
 import core.SQLEntities.User;
 import core.SQLEntities.UserRepo;
@@ -143,7 +143,17 @@ public class APIHead {
     }
     @RequestMapping(value = "review/checkIfReviewExistsByUser")
     public boolean checkIfReviewExists(@RequestHeader("authorid") String author, @RequestHeader("mediatype") String mediatype, @RequestHeader("mediaID") String mediaid){
-        Optional<Review> rev = reviewRepo.checkIfReviewExists(Integer.parseInt(mediatype), Long.parseLong(mediaid), Long.parseLong(author));
+        Optional<User> usr = userRepo.getUserByName(author);
+        if(usr.isPresent()==false){
+            return false;
+        } 
+
+        Optional<Review> rev = reviewRepo.checkIfReviewExists(Integer.parseInt(mediatype), Long.parseLong(mediaid), usr.get().getId());
         return rev.isPresent();
+    }
+    @RequestMapping(value = "Series/episodeList")
+    public ArrayList<TVEpisode> getSeriesEpisodesList(@RequestHeader("id") String tvID, @RequestHeader("seasonNum") String seasonNum){
+        TMDBInteractor interactor = new TMDBInteractor();
+        return interactor.episodeList(tvID, seasonNum);
     }
 }

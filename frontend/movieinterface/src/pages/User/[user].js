@@ -1,40 +1,77 @@
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
-
+import { getUserReviews, requestUserByID } from "../../../api/user";
+import UserReview from "@/components/UserReview";
+import Banner from "@/components/Banner";
+import { useState } from "react";
 export default function User(props){
+    const router = useRouter();
     const {data:session} = useSession()
-    console.log(props.userJSON);
-    console.log(session)
-    if(props.userJSON){
+    const [searchOption, setSearchOption] = useState("");
+    console.log(props.reviewData);
+    if(!props.userData){
         return <div className="text-white">
-        <div className="flex">
+            <Banner/>
+        <div className="border-2 border-black justify-center flex bg-offgrayhighlight">
+        <input className="text-black w-PreviewCardWidth border-2 border-offgrayhighlight" placeholder="  Search Movies, TV Shows, and Famous Actors!"
+        onChange={(event) => {
+            setSearchOption(event.target.value);
+        }}
+        onKeyDown={(event)=>{
+            if(event.key === 'Enter'){
+                router.push({pathname :"/Search",
+                query : {
+                    searchResult : searchOption
+                }
+    
+            
+                });
+            }
+        }}
 
-            <div className="text-white">{props.userJSON.username}</div>
-            <img src={props.userJSON.image}></img>
-        </div>
-        
-
+        ></input>
+    </div>
+        <div>This User could not be found!</div>
         </div>
     }
+    
     return <div className="text-white">
-        <div>This User could not be found!</div>
+        <Banner/>
+        <div className="border-2 border-black justify-center flex bg-offgrayhighlight">
+        <input className="text-black w-PreviewCardWidth border-2 border-offgrayhighlight" placeholder="  Search Movies, TV Shows, and Famous Actors!"
+        onChange={(event) => {
+            setSearchOption(event.target.value);
+        }}
+        onKeyDown={(event)=>{
+            if(event.key === 'Enter'){
+                router.push({pathname :"/Search",
+                query : {
+                    searchResult : searchOption
+                }
+    
+            
+                });
+            }
+        }}
+
+        ></input>
+    </div>
+    <div className="flex">
+
+        <div className="text-white">{props.userData.username}</div>
+        <img src={props.userData.image}></img>
+    </div>
+    <div className="text-white">Reviews!</div>
+    {props.reviewData.map((review,id)=>{
+        return <div key={id}><UserReview type={review.reviewType} name={review.authorName.replace(/['"]+/g, '')} mediaID={review.idOfMedia} dateWritten={review.localDate}
+        val={review.reviewVal} data={review.reviewData.replace(/['"]+/g, '')} mediaName={review.nameOfMedia.replace(/['"]+/g, '')}/></div>
+    })}
 
     </div>
 }
 export async function getServerSideProps(context){
-    const userData = await fetch("http://localhost:8080/user/returnUserByID", {method : "GET",
-    headers : {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'id' : context.query.user
-    }
-    });
-    const userJSON = await userData.json();
-    const reviewData = await fetch("http://localhost:8080/user/returnReviewByUser", {method : "GET",
-    headers : {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'userID' : context.query.user}})
-    return {props : {userJSON}};
+    const userData = await requestUserByID(context.query.user);
+    const reviewData = await getUserReviews(context.query.user)
+    return {props : {userData, reviewData}};
     
 }

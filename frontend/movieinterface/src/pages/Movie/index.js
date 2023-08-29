@@ -4,13 +4,12 @@ import { useRouter } from "next/router";
 import MovieSplashPage from "@/components/MovieSplashPage";
 import Link from "next/link";
 import ReviewPanel from "@/components/Review";
-import { useSession } from "next-auth/react";
+import { getSession, useSession } from "next-auth/react";
 import IsLoggedInForReview from "@/components/IsLoggedInForReview";
 import { checkIfUserWroteReviewForPage, getReviews } from "../../../api/Reviews";
 export default function Movie(props){
     const router = useRouter();
     const [searchOption, setSearchOption] = useState("");
-    console.log(props.reviewData);
     return <>
 
     
@@ -61,9 +60,8 @@ export default function Movie(props){
     
     <div className="text-white text-center p-2">User Submitted Reviews</div>
     <IsLoggedInForReview id={props.movieVal.id} type={'0'} title={props.movieVal.title} hasWritten={props.revCheck}></IsLoggedInForReview>
-    <ReviewPanel/>
     {props.reviewData.map((review, id)=>{
-        return <><div className="text-white">dd</div></>
+        return <div className="text-white" key={id}><ReviewPanel data={review.reviewData} author={review.authorName} authID={review.authorID} date={review.localDate}/></div>
     })}
     </>
     
@@ -71,6 +69,8 @@ export default function Movie(props){
 }
 
 export async function getServerSideProps(context){
+    const session = await getSession(context);
+    
     const result = await fetch("http://localhost:8080/movie/byID", {method:'GET',
     headers:{
         'Accept': 'application/json',
@@ -87,7 +87,11 @@ export async function getServerSideProps(context){
         }
 
     });
-    const revCheck = await checkIfUserWroteReviewForPage("0",context.query.id, "0");
+    let revCheck = false;
+    if(session){
+        revCheck = await checkIfUserWroteReviewForPage(session.user.name,context.query.id, "0");
+    }
+
     const reviewData = await getReviews(context.query.id, "0");
     const actorVal = await result2.json();
     return {props : {movieVal, actorVal, reviewData, revCheck}}

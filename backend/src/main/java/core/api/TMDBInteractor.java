@@ -13,6 +13,7 @@ import core.MediaRequestPackage.MovieCreditClass;
 import core.MediaRequestPackage.MovieIDClass;
 import core.MediaRequestPackage.MovieSubfolderPackage;
 import core.MediaRequestPackage.SpecificActor;
+import core.MediaRequestPackage.TVEpisode;
 import core.MediaRequestPackage.TVSeriesSubfolder;
 
 public class TMDBInteractor {
@@ -201,5 +202,28 @@ public class TMDBInteractor {
             context.close();
             return null;
         }
+    }
+    public ArrayList<TVEpisode> episodeList(String ID, String seasonNum){
+        String resourceURL = apiBuilder.getEpisodeList(ID, seasonNum);
+        WebClient client = WebClient.create(resourceURL);
+        String responseVar = client.get()
+        .header("Authorization", (" Bearer " + this.key.getKey())).accept(MediaType.APPLICATION_JSON).retrieve().bodyToMono(String.class).block();
+        try{
+            JsonNode node = this.objectmapper.readTree(responseVar);
+            ArrayList<TVEpisode> seasons = new ArrayList<TVEpisode>(100);
+            if(node.get("results").isArray()){
+                for(JsonNode noodle : node.get("results")){
+                    seasons.add(new TVEpisode(noodle));
+                }
+            }
+            context.close();
+            return seasons;
+        }
+        catch (Exception e){
+            System.out.println(e);
+            context.close();
+            return null;
+        }
+
     } 
 }
